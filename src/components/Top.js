@@ -4,11 +4,11 @@ import Translate from './Translate'
 
 export default {
     template: `<div class="top">
-                    <button :class="['translate-window-btn' , { 'active-top-btn' : showTranslate} ]" title="Translate" @click="updateShowTranslate"></button>
+                    <button v-show="checkConnection" :class="['translate-window-btn' , { 'active-top-btn' : showTranslate} ]" title="Translate" @click="updateShowTranslate"></button>
                     <input type="range" id="brightness" @input="updateBrightness" class="fr" min="0" max="1" step="0.02" value="1" v-if="! toggleBooksContent"
                         title="Brightness" />
                     <button class="back-to-main-btn" title="Back to Main" v-show="! toggleBooksContent" @click="backToMain"></button>
-                    <translate></translate>
+                    <translate v-show="checkConnection"></translate>
                 </div>`,
     methods: {
         ...mapActions({
@@ -21,7 +21,10 @@ export default {
         ...mapGetters({
             toggleBooksContent: 'toggleBooksContent',
             showTranslate: 'showTranslate'
-        })
+        }),
+        checkConnection() {
+            return false !== navigator.onLine;
+        }
     },
     components: {
         'translate': Translate

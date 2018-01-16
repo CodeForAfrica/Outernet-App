@@ -13,24 +13,24 @@ import BookViewer from './BookViewer'
 
 export default {
 	template: `<div :class="['main', { 'update' : update_check }]">
-								<top></top>
-								<sidebar v-show="toggleBooksContent"></sidebar>
-								<books-content v-show="toggleBooksContent"></books-content>
-								<book-viewer v-show="! toggleBooksContent" :src="openedBookPath"></book-viewer>
-								<div id="book-loader" v-show="isLoading">
-									<div class="spinner">
-										<div class="rect1"></div>
-										<div class="rect2"></div>
-										<div class="rect3"></div>
-										<div class="rect4"></div>
-										<div class="rect5"></div>
-									</div>
-								</div>
-								<div class="update_check" v-show="update_check">
-									<span>There are updates currently available.</span>
-									<button @click="downloadUpdate"> Download Update </button>
-								</div>
-						</div>`,
+					<top></top>
+					<sidebar v-show="toggleBooksContent"></sidebar>
+					<books-content v-show="toggleBooksContent"></books-content>
+					<book-viewer v-show="! toggleBooksContent" :src="openedBookPath"></book-viewer>
+					<div id="book-loader" v-show="isLoading">
+						<div class="spinner">
+							<div class="rect1"></div>
+							<div class="rect2"></div>
+							<div class="rect3"></div>
+							<div class="rect4"></div>
+							<div class="rect5"></div>
+						</div>
+					</div>
+					<div class="update_check" v-show="update_check">
+						<span>There are updates currently available.</span>
+						<button @click="downloadUpdate"> Download Update </button>
+					</div>
+			</div>`,
 	computed: {
 		...mapGetters({
 			toggleBooksContent: 'toggleBooksContent',
