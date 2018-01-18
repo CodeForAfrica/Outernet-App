@@ -23,9 +23,9 @@ export default {
         dragEnter(e) {
             e.preventDefault()
             document.querySelectorAll('[droppable]').forEach(e => e.classList.remove('enter'))
-            let bookList = e.path[1]
-            if (bookList.classList.contains('droppable')) {
-                bookList.classList.add('enter')
+            let appList = e.path[1]
+            if (appList.classList.contains('droppable')) {
+                appList.classList.add('enter')
             }
         }
     }

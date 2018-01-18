@@ -50,12 +50,6 @@ export default {
 		}
 	},
 	created() {
-		// Insert appslist for the first time user
-
-		/*
-			First query the db for to check if the record exist
-		*/ 
-
 		
 		localStorage.clear()
 

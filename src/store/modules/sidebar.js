@@ -31,6 +31,8 @@ const mutations = {
 
 const actions = {
 	addNewList({ state, commit }) {
+		// Check if the newList already exist in DB
+		
 		if (state.newListInput) {
 			let newListName = state.newListName.trim()
 			if (newListName) {
