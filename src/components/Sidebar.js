@@ -1,16 +1,16 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 
-import BookList from './BookList'
+import AppList from './AppList'
 import AuthorList from './AuthorList'
 
 export default {
     template: `<div class="sidebar">                    
                     <input type="text" class="search-box" placeholder="Search..." @input="bookSearching" />
                     <div style="height: calc(100% - 145px)">
-                        <h5>Book Lists <span v-show="bookLists.length">{{ bookLists.length }}</span></h5>
+                        <h5>Apps List <span v-show="appLists.length">{{ appLists.length }}</span></h5>
                         <ul>
-                            <li v-for="list in bookLists">
-                                <book-list :list-name="list.listName" :list-id="list._id"></book-list>
+                            <li v-for="list in appLists">
+                                <app-list :list-name="list.listName" :list-id="list._id"></app-list>
                             </li>
                         </ul>
                         <h5>Authors <span v-show="authorsList.length">{{ authorsList.length }}</span></h5>
@@ -37,18 +37,18 @@ export default {
             newListName: state => state.newListInput
         }),
         ...mapGetters({
-            bookLists: 'bookLists',
+            appLists: 'appLists',
             authorsList: 'authorsList',
             newListInput: 'newListInput',
             newListName: 'newListName'
         })
     },
     components: {
-        'book-list': BookList,
+        'app-list': AppList,
         'author-list': AuthorList
     },
     created() {
-        this.updateBookLists()
+        this.updateAppLists()
         this.updateAuthorsList()
     },
     methods: {
@@ -56,7 +56,7 @@ export default {
             this.$store.commit('updateNewListName', e.target.value)
         },
         ...mapMutations({
-            updateBookLists: 'updateBookLists',
+            updateAppLists: 'updateAppLists',
             updateAuthorsList: 'updateAuthorsList'
         }),
         ...mapActions({

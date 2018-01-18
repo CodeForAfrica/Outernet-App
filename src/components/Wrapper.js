@@ -5,18 +5,19 @@ import { shell } from 'electron'
 
 import Top from './Top'
 import Sidebar from './Sidebar'
-import BooksContent from './BooksContent'
+import SourcesContent from './SourcesContent'
 import Book from './Book'
-import BookList from './BookList'
+import AppList from './AppList'
 import AuthorList from './AuthorList'
 import BookViewer from './BookViewer'
+import { setInterval } from 'timers';
 
 export default {
 	template: `<div :class="['main', { 'update' : update_check }]">
 					<top></top>
-					<sidebar v-show="toggleBooksContent"></sidebar>
-					<books-content v-show="toggleBooksContent"></books-content>
-					<book-viewer v-show="! toggleBooksContent" :src="openedBookPath"></book-viewer>
+					<sidebar v-show="toggleSourcesContent"></sidebar>
+					<sources-content v-show="toggleSourcesContent"></sources-content>
+					<book-viewer v-show="! toggleSourcesContent" :src="openedBookPath"></book-viewer>
 					<div id="book-loader" v-show="isLoading">
 						<div class="spinner">
 							<div class="rect1"></div>
@@ -33,7 +34,7 @@ export default {
 			</div>`,
 	computed: {
 		...mapGetters({
-			toggleBooksContent: 'toggleBooksContent',
+			toggleSourcesContent: 'toggleSourcesContent',
 			openedBookPath: 'openedBookPath',
 			isLoading: 'isLoading'
 		})
@@ -49,10 +50,17 @@ export default {
 		}
 	},
 	created() {
+		// Insert appslist for the first time user
+
+		/*
+			First query the db for to check if the record exist
+		*/ 
+
+		
 		localStorage.clear()
 
 		try {
-			request.get('https://api.github.com/repos/oguzhaninan/Buka/releases/latest',
+			request.get('https://api.github.com/repos/mtuchi/C4T-Ed/releases/latest',
 				{ headers: { 'Content-Type': 'application/json', 'User-Agent': 'request' } },
 				(err, res, body) => {
 					let jsonBody = JSON.parse(body)
@@ -70,7 +78,7 @@ export default {
 	components: {
 		'top': Top,
 		'sidebar': Sidebar,
-		'books-content': BooksContent,
+		'sources-content': SourcesContent,
 		'book-viewer': BookViewer
 	}
 }

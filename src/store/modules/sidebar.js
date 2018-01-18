@@ -2,21 +2,21 @@
 const state = {
 	newListName: '',
 	newListInput: false,
-	bookLists: [],
+	appLists: [],
 	authorsList: []
 }
 
 const getters = {
-	bookLists: state => state.bookLists,
+	appLists: state => state.appLists,
 	authorsList: state => state.authorsList,
 	newListInput: state => state.newListInput,
 	newListName: state => state.newListName
 }
 
 const mutations = {
-	updateBookLists(state) {
-		bookListDb.find({}).sort({ listName: 1 }).exec((err, docs) => {
-			state.bookLists = docs
+	updateAppLists(state) {
+		appListDB.find({}).sort({ listName: 1 }).exec((err, docs) => {
+			state.appLists = docs
 		})
 	},
 	updateAuthorsList(state) {
@@ -34,10 +34,10 @@ const actions = {
 		if (state.newListInput) {
 			let newListName = state.newListName.trim()
 			if (newListName) {
-				bookListDb.insert({
+				appListDB.insert({
 					listName: newListName,
-					books: []
-				}, () => commit('updateBookLists'))
+					sources: []
+				}, () => commit('updateAppLists'))
 			}
 			state.newListName = ''
 			state.newListInput = false
@@ -53,18 +53,18 @@ const actions = {
 		let query = event.target.value.toLowerCase().trim()
 
 		if (query) {
-			bookListDb.find({}, (er, docs) => {
+			appListDB.find({}, (er, docs) => {
 				docs.forEach((list) => {
-					list.books.forEach((book) => {
-						if (book.bookName.toLowerCase().indexOf(query) !== -1)
-							results.push(book)
-						else if (book.bookAuthor.toLowerCase().indexOf(query) !== -1)
-							results.push(book)
+					list.sources.forEach((source) => {
+						if (source.bookName.toLowerCase().indexOf(query) !== -1)
+							results.push(source)
+						else if (source.bookAuthor.toLowerCase().indexOf(query) !== -1)
+							results.push(source)
 					})
 				})
 			})
 		}
-		rootState.booksContent.booksContent = results
+		rootState.sourcesContent.sourcesContent = results
 	}
 }
 

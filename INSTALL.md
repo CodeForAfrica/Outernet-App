@@ -15,7 +15,7 @@
 
 ## About Buka
 
-**Buka** is a modern software that helps you manage your ebook at ease. With a simple, clean and straight-forward user interface, **Buka** aims to gather your ebooks for a reading experience without hassles. **Buka** currently support .PDF format with configurations that helps user focus more on the content. 
+**Buka** is a modern software that helps you manage your ebook at ease. With a simple, clean and straight-forward user interface, **Buka** aims to gather your esources for a reading experience without hassles. **Buka** currently support .PDF format with configurations that helps user focus more on the content. 
 
 ## Installing
 

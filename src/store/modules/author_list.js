@@ -1,20 +1,20 @@
 
 const actions = {
 	/**
-	 * Show the books of the selected author.
+	 * Show the sources of the selected author.
 	 * @param {Object} args
 	 * args = { authorName, event }
 	 */
 	openAuthorList({ rootState, commit }, args) {
-		let books = []
-		bookListDb.find({ 'books.bookAuthor': args.authorName }, (err, docs) => {
+		let sources = []
+		appListDB.find({ 'sources.bookAuthor': args.authorName }, (err, docs) => {
 			docs.forEach((list) => {
-				list.books.forEach((book) => {
-					if (books.every(b => b.bookPath != book.bookPath) && book.bookAuthor == args.authorName)
-						books.push(book)
+				list.sources.forEach((book) => {
+					if (sources.every(b => b.bookPath != book.bookPath) && book.bookAuthor == args.authorName)
+						sources.push(book)
 				})
 			})
-			rootState.booksContent.booksContent = books
+			rootState.sourcesContent.sourcesContent = sources
 		})
 		commit('activeList', args.event)
 	}

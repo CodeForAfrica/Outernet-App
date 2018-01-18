@@ -51,15 +51,19 @@
   "homepage": "https://github.com/oguzhaninan/C4T-Ed",
   "dependencies": {
     "alertify.js": "^1.0.12",
+    "is-online": "^7.0.0",
+    "is-reachable": "^2.3.3",
     "nedb": "^1.8.0",
     "node-google-translate-skidz": "^1.1.1",
     "request": "^2.81.0",
-    "vuex": "^2.3.1"
+    "vuex": "^2.3.1",
+    "web-pingjs": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
-    "electron": "^1.6.6"
+    "electron": "^1.6.6",
+    "electron-debug": "^1.5.0"
   }
 }

@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import app from './modules/app'
 import sidebar from './modules/sidebar'
-import booksContent from './modules/books_content'
+import sourcesContent from './modules/sources_content'
 import authorList from './modules/author_list'
 import bookList from './modules/book_list'
 import book from './modules/book'
@@ -14,7 +14,7 @@ export default new Vuex.Store({
 		app,
 		top,
 		sidebar,
-		booksContent,
+		sourcesContent,
 		bookList,
 		authorList,
 		book,
