@@ -13,14 +13,14 @@ export default {
                                 <app-list :list-name="list.listName" :list-id="list._id"></app-list>
                             </li>
                         </ul>
-                        <h5>Authors <span v-show="authorsList.length">{{ authorsList.length }}</span></h5>
-                        <ul>
+                        <h5 v-show="false">Authors <span v-show="authorsList.length">{{ authorsList.length }}</span></h5>
+                        <ul v-show="false">
                             <li v-for="author in authorsList">
                                 <author-list :author-name="author.authorName" :author-id="author._id"></author-list>
                             </li>
                         </ul>
                     </div>
-                    <div class="w100 fl tc sidebar-bottom">
+                    <div v-show="false" class="w100 fl tc sidebar-bottom">
                         <input type="text" id="add-new-list-input" @keyup.enter="addNewList" @input="updateNewListName" :value="newListName" placeholder="List name" v-show="newListInput"/>
                         <button type="button" id="add-new-list-btn" 
                             :class="newListInput ?

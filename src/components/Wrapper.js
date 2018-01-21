@@ -11,6 +11,8 @@ import AppList from './AppList'
 import AuthorList from './AuthorList'
 import BookViewer from './BookViewer'
 import { setInterval } from 'timers';
+import jsftp from 'jsftp'
+import isReachable from 'is-reachable'
 
 export default {
 	template: `<div :class="['main', { 'update' : update_check }]">
@@ -50,7 +52,23 @@ export default {
 		}
 	},
 	created() {
-		
+		// Check if you can ftp to outernet dreamacatcher
+		setInterval(() => {
+			isReachable('10.0.0.1').then(reachable => {
+				console.log(reachable);
+			});
+		},1000)
+
+		const Ftp = new jsftp({
+			host: "10.0.0.1",
+			user: "outernet", // defaults to "anonymous"
+			pass: "outernet" // defaults to "@anonymous"
+		});
+
+		Ftp.ls("/mnt/downloads", (err, res) => {
+			res.forEach(file => console.log(file.name));
+		});
+				
 		localStorage.clear()
 
 		try {
