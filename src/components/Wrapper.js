@@ -1,5 +1,5 @@
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import request from 'request'
 import { shell } from 'electron'
 
@@ -49,12 +49,17 @@ export default {
 		downloadUpdate() {
 			let homepage = require('../../package.json').homepage
 			shell.openExternal(homepage + '/releases/latest')
-		}
+		},
+		...mapActions({
+			addAppList: 'addAppList',
+		})
 	},
 	created() {
+		this.addAppList()
+
 		// Check if you can ftp to outernet dreamacatcher
 		setInterval(() => {
-			isReachable('10.0.0.1').then(reachable => {
+			isReachable('ftp://10.0.0.1:21').then(reachable => {
 				console.log(reachable);
 			});
 		},1000)

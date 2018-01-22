@@ -1,3 +1,4 @@
+import appslist from '../../utils/appslist';
 
 const state = {
 	newListName: '',
@@ -30,9 +31,23 @@ const mutations = {
 }
 
 const actions = {
-	addNewList({ state, commit }) {
-		// Check if the newList already exist in DB
-		
+	addAppList({ commit }) {
+		appslist.forEach(e => {
+			appListDB.find({listName: e.listName}, function(err, docs){
+				if(docs.length) {
+					// The app already exist
+					// console.log(docs);
+				} else {
+					// Insert new apps for the first time
+					appListDB.insert({
+						listName: e.listName,
+						sources: e.sources
+					}, () => commit('updateAppLists'))
+				}
+			});
+		});
+	},
+	addNewList({ state, commit }) {		
 		if (state.newListInput) {
 			let newListName = state.newListName.trim()
 			if (newListName) {
