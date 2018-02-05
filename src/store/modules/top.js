@@ -21,18 +21,18 @@ const actions = {
 	},
 
 	backToMain({ rootState }) {
-		rootState.app.toggleSourcesContent = true
-		rootState.app.openedBookPath = ''
+		rootState.wrapper.toggleSourcesContent = true
+		rootState.wrapper.openedBookPath = ''
 	},
 
 	checkConnection({ rootState }) {
 		// Check for internet connection
 		isOnline().then(online => {
 			// Connection is up
-			rootState.app.connectionStatus = online
+			rootState.wrapper.connectionStatus = online
 		}).catch(offline => {
 			// No connection
-			rootState.app.connectionStatus = offline
+			rootState.wrapper.connectionStatus = offline
 		});
 	}
 }

@@ -1,5 +1,5 @@
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import request from 'request'
 import { shell } from 'electron'
 
@@ -11,6 +11,7 @@ import AppList from './AppList'
 import AuthorList from './AuthorList'
 import BookViewer from './BookViewer'
 import { setInterval } from 'timers';
+import jsftp from 'jsftp'
 
 export default {
 	template: `<div :class="['main', { 'update' : update_check }]">
@@ -47,18 +48,47 @@ export default {
 		downloadUpdate() {
 			let homepage = require('../../package.json').homepage
 			shell.openExternal(homepage + '/releases/latest')
-		}
+		},
+		...mapActions({
+			addAppList: 'addAppList',
+			addSources: 'addSources',
+		})
 	},
 	created() {
-		// Insert appslist for the first time user
+		this.addAppList()
 
-		/*
-			First query the db for to check if the record exist
-		*/ 
+		// Check if you can ftp to outernet dreamacatcher
+		// Ftp to the dreamcatcher
+		const Ftp = new jsftp({
+			host: "10.0.0.1",
+			// user: "outernet", // defaults to "anonymous"
+			// pass: "outernet" // defaults to "@anonymous"
+		});
 
+		let sources = [];
+		const url = 'ftp://10.0.0.1/downloads';
 		
-		localStorage.clear()
+		Ftp.ls("downloads/Wikipedia/", (err, res) => {
+			res.forEach(file => {
+				let source = `downloads/Wikipedia/${file.name}`;
+				
+				sources.push(source);
+				this.addSources({ listName: 'Wikipedia', src: source});
+			});
+		});
 
+		sources.forEach(file => {
+			console.log(file)
+			Ftp.get(`${file}`, `../../assets/storage/Wikipedia/`, err => {
+				if (err) {
+					console.error(err)
+				}
+				console.log("File copied")
+			})
+		})
+
+		localStorage.clear()
+		
 		try {
 			request.get('https://api.github.com/repos/mtuchi/C4T-Ed/releases/latest',
 				{ headers: { 'Content-Type': 'application/json', 'User-Agent': 'request' } },

@@ -1,13 +1,14 @@
+import appslist from '../../utils/appslist';
 
 const state = {
 	newListName: '',
 	newListInput: false,
-	appLists: [],
+	appsList: [],
 	authorsList: []
 }
 
 const getters = {
-	appLists: state => state.appLists,
+	appsList: state => state.appsList,
 	authorsList: state => state.authorsList,
 	newListInput: state => state.newListInput,
 	newListName: state => state.newListName
@@ -16,7 +17,7 @@ const getters = {
 const mutations = {
 	updateAppLists(state) {
 		appListDB.find({}).sort({ listName: 1 }).exec((err, docs) => {
-			state.appLists = docs
+			state.appsList = docs
 		})
 	},
 	updateAuthorsList(state) {
@@ -30,7 +31,33 @@ const mutations = {
 }
 
 const actions = {
-	addNewList({ state, commit }) {
+	addAppList({ commit }) {
+		appslist.forEach(e => {
+			appListDB.find({listName: e.listName}, function(err, docs){
+				if(docs.length) {
+					// The app already exist
+					// console.log(docs);
+				} else {
+					// Insert new apps for the first time
+					appListDB.insert({
+						listName: e.listName,
+						sources: e.sources
+					}, () => commit('updateAppLists'))
+				}
+			});
+		});
+	},
+	addSources({ dispatch, commit }, args) {
+		appListDB.find({listName: args.listName, sources: args.src }, function(err, docs) {
+			if(docs.length) {
+				console.log(`Source exist ${args}`);
+			} else {
+				dispatch('addListSource', args)
+				// console.log(`Add source in ${args.listName}`);
+			}
+		})
+	},
+	addNewList({ state, commit }) {		
 		if (state.newListInput) {
 			let newListName = state.newListName.trim()
 			if (newListName) {

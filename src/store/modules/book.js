@@ -8,8 +8,8 @@ const actions = {
 	 * @param {string} bookPath
 	 */
 	openBook({ rootState }, bookPath) {
-		rootState.app.openedBookPath = '../pdfviewer/web/viewer.html?file=' + bookPath
-		rootState.app.toggleSourcesContent = false
+		rootState.wrapper.openedBookPath = '../pdfviewer/web/viewer.html?file=' + bookPath
+		rootState.wrapper.toggleSourcesContent = false
 
 		// The address of the external links clicked in the book is given to the input named <externalLink>.		
 		try {
