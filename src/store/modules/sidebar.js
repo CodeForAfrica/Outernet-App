@@ -3,12 +3,12 @@ import appslist from '../../utils/appslist';
 const state = {
 	newListName: '',
 	newListInput: false,
-	appLists: [],
+	appsList: [],
 	authorsList: []
 }
 
 const getters = {
-	appLists: state => state.appLists,
+	appsList: state => state.appsList,
 	authorsList: state => state.authorsList,
 	newListInput: state => state.newListInput,
 	newListName: state => state.newListName
@@ -17,7 +17,7 @@ const getters = {
 const mutations = {
 	updateAppLists(state) {
 		appListDB.find({}).sort({ listName: 1 }).exec((err, docs) => {
-			state.appLists = docs
+			state.appsList = docs
 		})
 	},
 	updateAuthorsList(state) {
@@ -46,6 +46,16 @@ const actions = {
 				}
 			});
 		});
+	},
+	addSources({ dispatch, commit }, args) {
+		appListDB.find({listName: args.listName, sources: args.src }, function(err, docs) {
+			if(docs.length) {
+				console.log(`Source exist ${args}`);
+			} else {
+				dispatch('addListSource', args)
+				// console.log(`Add source in ${args.listName}`);
+			}
+		})
 	},
 	addNewList({ state, commit }) {		
 		if (state.newListInput) {

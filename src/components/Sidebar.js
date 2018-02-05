@@ -7,9 +7,9 @@ export default {
     template: `<div class="sidebar">                    
                     <input type="text" class="search-box" placeholder="Search..." @input="bookSearching" />
                     <div style="height: calc(100% - 145px)">
-                        <h5>Apps List <span v-show="appLists.length">{{ appLists.length }}</span></h5>
+                        <h5>Apps List <span v-show="appsList.length">{{ appsList.length }}</span></h5>
                         <ul>
-                            <li v-for="list in appLists">
+                            <li v-for="list in appsList">
                                 <app-list :list-name="list.listName" :list-id="list._id"></app-list>
                             </li>
                         </ul>
@@ -37,7 +37,7 @@ export default {
             newListName: state => state.newListInput
         }),
         ...mapGetters({
-            appLists: 'appLists',
+            appsList: 'appsList',
             authorsList: 'authorsList',
             newListInput: 'newListInput',
             newListName: 'newListName'

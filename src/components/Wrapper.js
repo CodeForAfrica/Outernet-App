@@ -12,7 +12,6 @@ import AuthorList from './AuthorList'
 import BookViewer from './BookViewer'
 import { setInterval } from 'timers';
 import jsftp from 'jsftp'
-import isReachable from 'is-reachable'
 
 export default {
 	template: `<div :class="['main', { 'update' : update_check }]">
@@ -52,30 +51,44 @@ export default {
 		},
 		...mapActions({
 			addAppList: 'addAppList',
+			addSources: 'addSources',
 		})
 	},
 	created() {
 		this.addAppList()
 
 		// Check if you can ftp to outernet dreamacatcher
-		setInterval(() => {
-			isReachable('ftp://10.0.0.1:21').then(reachable => {
-				console.log(reachable);
-			});
-		},1000)
-
+		// Ftp to the dreamcatcher
 		const Ftp = new jsftp({
 			host: "10.0.0.1",
-			user: "outernet", // defaults to "anonymous"
-			pass: "outernet" // defaults to "@anonymous"
+			// user: "outernet", // defaults to "anonymous"
+			// pass: "outernet" // defaults to "@anonymous"
 		});
 
-		Ftp.ls("/mnt/downloads", (err, res) => {
-			res.forEach(file => console.log(file.name));
-		});
+		let sources = [];
+		const url = 'ftp://10.0.0.1/downloads';
+		
+		Ftp.ls("downloads/Wikipedia/", (err, res) => {
+			res.forEach(file => {
+				let source = `downloads/Wikipedia/${file.name}`;
 				
-		localStorage.clear()
+				sources.push(source);
+				this.addSources({ listName: 'Wikipedia', src: source});
+			});
+		});
 
+		sources.forEach(file => {
+			console.log(file)
+			Ftp.get(`${file}`, `../../assets/storage/Wikipedia/`, err => {
+				if (err) {
+					console.error(err)
+				}
+				console.log("File copied")
+			})
+		})
+
+		localStorage.clear()
+		
 		try {
 			request.get('https://api.github.com/repos/mtuchi/C4T-Ed/releases/latest',
 				{ headers: { 'Content-Type': 'application/json', 'User-Agent': 'request' } },

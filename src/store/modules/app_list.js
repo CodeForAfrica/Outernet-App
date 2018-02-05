@@ -38,6 +38,75 @@ const actions = {
 	},
 	/**
 	 * @param {Object} args
+	 * args = { src, listName }
+	 */
+	addListSource({ rootState, commit }, args) {
+		// Maximum 20 files
+		let selectedFiles = args.src
+		if (selectedFiles.length > 0) commit('isLoading')
+
+		if (selectedFiles.length > 20)
+			selectedFiles = Array.from(selectedFiles).slice(0, 20)
+		let filePaths = Object.keys(selectedFiles).map(f => selectedFiles[f].path)
+
+		if (!fs.existsSync(`${userData}/book-images`))
+			fs.mkdirSync(`${userData}/book-images`)
+
+		let sources = [], tempAuthors = new Set(), authors = new Set()
+
+		new Promise(resolve => {
+			authorListDb.find({}, (e, docs) => resolve(docs.map(a => a.authorName)))
+		}).then(tempAuthors => {
+			new Promise(resolve => {
+				filePaths.forEach(bookPath => {
+					let data = fs.readFileSync(bookPath)
+
+					// generate bookId
+					let bookId = (args.listId + '_' + Math.random().toString(36).substr(2, 9))
+					let bookImagePath = `${userData}/book-images/${bookId}.jpeg`
+
+					// props = { meta, pageCount }
+					saveImage(data, bookImagePath).then(props => {
+						let metadata = props.meta.metadata != null ? props.meta.metadata.metadata : {}
+						let info = props.meta.info != null ? props.meta.info : {}
+
+						let bookName = (metadata['dc:title'] != '()' ? metadata['dc:title'] : '')
+							|| bookPath.match(/.*[\/\\](.+?)\./).pop()
+							|| 'Untitled'
+						let bookAuthor = info.Author
+							|| metadata['dc:author']
+							|| 'Unknown Author'
+						let bookPageCount = props.pageCount
+
+						authors.add(bookAuthor)
+
+						sources.push({
+							bookId: bookId,
+							bookImagePath: bookImagePath,
+							bookPath: bookPath,
+							bookName: bookName,
+							bookAuthor: bookAuthor,
+							bookPageCount: bookPageCount,
+							listId: args.listId
+						})
+
+						if (sources.length == selectedFiles.length) resolve(sources)
+					})
+				})
+			}).then(sources => {
+				appListDB.update({ listName: args.listName }, { $push: { sources: { $each: sources } } }, (err, num) => {
+					let _tempAuthors = Array.from(tempAuthors)
+					let _authors = Array.from(authors).filter(e => _tempAuthors.indexOf(e) === -1).map(e => ({ authorName: e }))
+
+					authorListDb.insert(_authors, err => commit('updateAuthorsList'))
+					commit('updateBookContents', args.listId)
+					commit('isLoading')
+				})
+			})
+		})
+	},
+	/**
+	 * @param {Object} args
 	 * args = { event, listId }
 	 */
 	addListBook({ rootState, commit }, args) {

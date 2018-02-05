@@ -5,7 +5,7 @@ export default {
     template: `<div class="book-list" @drop="drop(listId)" @dragover.prevent @dragenter="dragEnter" droppable="true">
                     <span :title="listName" @click="openBookList({ listId: listId,
                                                                    event: $event })">{{ listName }}</span>
-                    <label v-show="false" :for="listId" title="Add New Book" class="add-list-book"></label>
+                    <label v-show="true" :for="listId" title="Add New Book" class="add-list-book"></label>
                     <button v-show="false" title="Remove List" @click="remove({ listId: listId,
                                                                  listName: listName })" class="remove-list-btn"></button>
                     <input v-show="false" type="file" :id="listId" accept="application/pdf" @change="addListBook({ listId: listId,
