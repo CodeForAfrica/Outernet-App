@@ -10,8 +10,11 @@ import Book from './Book'
 import AppList from './AppList'
 import AuthorList from './AuthorList'
 import BookViewer from './BookViewer'
-import { setInterval } from 'timers';
-import jsftp from 'jsftp'
+import { setInterval, setTimeout } from 'timers'
+import JSftp from 'jsftp'
+import async from 'async'
+import path from 'path'
+import ListingParser from 'parse-listing'
 
 export default {
 	template: `<div :class="['main', { 'update' : update_check }]">
@@ -57,35 +60,60 @@ export default {
 	created() {
 		this.addAppList()
 
-		// Check if you can ftp to outernet dreamacatcher
-		// Ftp to the dreamcatcher
-		const Ftp = new jsftp({
-			host: "10.0.0.1",
-			// user: "outernet", // defaults to "anonymous"
-			// pass: "outernet" // defaults to "@anonymous"
+		const options = {
+			"host": "10.0.0.1",
+			"port": 21,
+			"user": "outernet",
+			"pass": "outernet",
+		};
+
+		var c = new JSftp(options);
+
+		c.on('jsftp_debug', function (eventType, data) {
+			console.log('DEBUG: ', eventType);
+			console.log(JSON.stringify(data, null, 2));
 		});
 
-		let sources = [];
-		const url = 'ftp://10.0.0.1/downloads';
-		
-		Ftp.ls("downloads/Wikipedia/", (err, res) => {
-			res.forEach(file => {
-				let source = `downloads/Wikipedia/${file.name}`;
-				
-				sources.push(source);
-				this.addSources({ listName: 'Wikipedia', src: source});
-			});
-		});
+		c.list('/mnt/downloads/Wikipedia', function (err, entries) {
 
-		sources.forEach(file => {
-			console.log(file)
-			Ftp.get(`${file}`, `../../assets/storage/Wikipedia/`, err => {
-				if (err) {
-					console.error(err)
-				}
-				console.log("File copied")
-			})
-		})
+			if (err) {
+				return console.error(err);
+			}
+
+			function parsedEntries(err, files) {
+				if (err) return console.log(err);
+				var cur = 0, L = files.length;
+				var checkIfDone = function () {
+					cur++;
+					if (cur === L) {
+						console.log("all files downloaded");
+					}
+				};
+
+				var getArray = [];
+				files.forEach(function (file) {
+					if (file.type !== '1' && path.extname(file.name) === '.html') {
+						console.log(file.name);
+						getArray.push(function (cb) {
+							c.get(file.name, '~/assets/storage/' + file.name, function (hadErr) {
+								if (hadErr) {
+									console.log(hadErr)
+									console.error('There was an error retrieving the file.');
+								} else {
+									console.log('File copied successfully!');
+									checkIfDone();
+								}
+								cb();
+							});
+						});
+					}
+				});
+
+				async.series(getArray);
+				// console.log("Getting the list of files from FTP.");
+			}
+			ListingParser.parseFtpEntries(entries, parsedEntries);
+		});
 
 		localStorage.clear()
 		

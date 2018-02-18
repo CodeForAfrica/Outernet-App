@@ -1,0 +1,8 @@
+{
+    "local": "./assets/storage/",
+    "remote": "./downloads",
+    "host": "10.0.0.1",
+    "port": 21,
+    "user": "outernet",
+    "pass": "outernet"
+}
