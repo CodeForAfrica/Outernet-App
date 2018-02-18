@@ -1,3 +1,4 @@
+import isOnline from 'is-online'
 
 const state = {
 	showTranslate: false
@@ -16,11 +17,23 @@ const actions = {
 		catch (err) { }
 	},
 	updateShowTranslate({ state }) {
-		state.showTranslate = ! state.showTranslate
+		state.showTranslate = !state.showTranslate		
 	},
+
 	backToMain({ rootState }) {
-		rootState.app.toggleBooksContent = true
-		rootState.app.openedBookPath = ''
+		rootState.wrapper.toggleSourcesContent = true
+		rootState.wrapper.openedBookPath = ''
+	},
+
+	checkConnection({ rootState }) {
+		// Check for internet connection
+		isOnline().then(online => {
+			// Connection is up
+			rootState.wrapper.connectionStatus = online
+		}).catch(offline => {
+			// No connection
+			rootState.wrapper.connectionStatus = offline
+		});
 	}
 }
 

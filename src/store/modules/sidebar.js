@@ -1,22 +1,23 @@
+import appslist from '../../utils/appslist';
 
 const state = {
 	newListName: '',
 	newListInput: false,
-	bookLists: [],
+	appsList: [],
 	authorsList: []
 }
 
 const getters = {
-	bookLists: state => state.bookLists,
+	appsList: state => state.appsList,
 	authorsList: state => state.authorsList,
 	newListInput: state => state.newListInput,
 	newListName: state => state.newListName
 }
 
 const mutations = {
-	updateBookLists(state) {
-		bookListDb.find({}).sort({ listName: 1 }).exec((err, docs) => {
-			state.bookLists = docs
+	updateAppLists(state) {
+		appListDB.find({}).sort({ listName: 1 }).exec((err, docs) => {
+			state.appsList = docs
 		})
 	},
 	updateAuthorsList(state) {
@@ -30,14 +31,40 @@ const mutations = {
 }
 
 const actions = {
-	addNewList({ state, commit }) {
+	addAppList({ commit }) {
+		appslist.forEach(e => {
+			appListDB.find({listName: e.listName}, function(err, docs){
+				if(docs.length) {
+					// The app already exist
+					// console.log(docs);
+				} else {
+					// Insert new apps for the first time
+					appListDB.insert({
+						listName: e.listName,
+						sources: e.sources
+					}, () => commit('updateAppLists'))
+				}
+			});
+		});
+	},
+	addSources({ dispatch, commit }, args) {
+		appListDB.find({listName: args.listName, sources: args.src }, function(err, docs) {
+			if(docs.length) {
+				console.log(`Source exist ${args}`);
+			} else {
+				dispatch('addListSource', args)
+				// console.log(`Add source in ${args.listName}`);
+			}
+		})
+	},
+	addNewList({ state, commit }) {		
 		if (state.newListInput) {
 			let newListName = state.newListName.trim()
 			if (newListName) {
-				bookListDb.insert({
+				appListDB.insert({
 					listName: newListName,
-					books: []
-				}, () => commit('updateBookLists'))
+					sources: []
+				}, () => commit('updateAppLists'))
 			}
 			state.newListName = ''
 			state.newListInput = false
@@ -53,18 +80,18 @@ const actions = {
 		let query = event.target.value.toLowerCase().trim()
 
 		if (query) {
-			bookListDb.find({}, (er, docs) => {
+			appListDB.find({}, (er, docs) => {
 				docs.forEach((list) => {
-					list.books.forEach((book) => {
-						if (book.bookName.toLowerCase().indexOf(query) !== -1)
-							results.push(book)
-						else if (book.bookAuthor.toLowerCase().indexOf(query) !== -1)
-							results.push(book)
+					list.sources.forEach((source) => {
+						if (source.bookName.toLowerCase().indexOf(query) !== -1)
+							results.push(source)
+						else if (source.bookAuthor.toLowerCase().indexOf(query) !== -1)
+							results.push(source)
 					})
 				})
 			})
 		}
-		rootState.booksContent.booksContent = results
+		rootState.sourcesContent.sourcesContent = results
 	}
 }
 

@@ -8,8 +8,8 @@ const actions = {
 	 * @param {string} bookPath
 	 */
 	openBook({ rootState }, bookPath) {
-		rootState.app.openedBookPath = '../pdfviewer/web/viewer.html?file=' + bookPath
-		rootState.app.toggleBooksContent = false
+		rootState.wrapper.openedBookPath = '../pdfviewer/web/viewer.html?file=' + bookPath
+		rootState.wrapper.toggleSourcesContent = false
 
 		// The address of the external links clicked in the book is given to the input named <externalLink>.		
 		try {
@@ -32,17 +32,17 @@ const actions = {
 		fs.unlink(args.bookImagePath)
 
 		let bookCount = 0
-		bookListDb.find({}, (err, lists) => {
+		appListDB.find({}, (err, lists) => {
 			lists.forEach(list => {
-				list.books.forEach(book => {
+				list.sources.forEach(book => {
 					if (book.bookAuthor == args.bookAuthor) bookCount++
 				})
 			})
 			// If the book author only has this book, the author is removed.
 			if (bookCount == 1)
 				authorListDb.remove({ authorName: args.bookAuthor })
-			// the book remove from the books list.
-			bookListDb.update({ _id: args.listId }, { $pull: { books: { bookId: args.bookId } } }, (err, n) => {
+			// the book remove from the sources list.
+			appListDB.update({ _id: args.listId }, { $pull: { sources: { bookId: args.bookId } } }, (err, n) => {
 				// The author list and the book content are updated.
 				commit('updateAuthorsList')
 				commit('updateBookContents', args.listId)

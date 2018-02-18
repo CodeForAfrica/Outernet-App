@@ -5,10 +5,10 @@ export default {
     template: `<div class="book-list" @drop="drop(listId)" @dragover.prevent @dragenter="dragEnter" droppable="true">
                     <span :title="listName" @click="openBookList({ listId: listId,
                                                                    event: $event })">{{ listName }}</span>
-                    <label :for="listId" title="Add New Book" class="add-list-book"></label>
-                    <button title="Remove List" @click="remove({ listId: listId,
+                    <label v-show="true" :for="listId" title="Add New Book" class="add-list-book"></label>
+                    <button v-show="false" title="Remove List" @click="remove({ listId: listId,
                                                                  listName: listName })" class="remove-list-btn"></button>
-                    <input type="file" :id="listId" accept="application/pdf" @change="addListBook({ listId: listId,
+                    <input v-show="false" type="file" :id="listId" accept="application/pdf" @change="addListBook({ listId: listId,
                                                                                                      event: $event
                                                                                                     })" maxlength="5" hidden multiple/>
                 </div>`,
@@ -23,9 +23,9 @@ export default {
         dragEnter(e) {
             e.preventDefault()
             document.querySelectorAll('[droppable]').forEach(e => e.classList.remove('enter'))
-            let bookList = e.path[1]
-            if (bookList.classList.contains('droppable')) {
-                bookList.classList.add('enter')
+            let appList = e.path[1]
+            if (appList.classList.contains('droppable')) {
+                appList.classList.add('enter')
             }
         }
     }

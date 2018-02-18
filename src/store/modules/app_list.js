@@ -22,19 +22,88 @@ const actions = {
 		let dragListId = localStorage.getItem('dragListId')
 
 		if (dragBookId && dragListId) {
-			bookListDb.findOne({ _id: dragListId }, (err, doc) => {
-				let dragBook = doc.books.filter(b => b.bookId == dragBookId)[0]
+			appListDB.findOne({ _id: dragListId }, (err, doc) => {
+				let dragBook = doc.sources.filter(b => b.bookId == dragBookId)[0]
 				dragBook.listId = listId
 				if (dragBook)
 					// the dragged book own list removed.
-					bookListDb.update({ _id: dragListId }, { $pull: { books: { bookId: dragBookId } } }, err => {
+					appListDB.update({ _id: dragListId }, { $pull: { sources: { bookId: dragBookId } } }, err => {
 						// the book was saved to the new list.
-						bookListDb.update({ _id: listId }, { $push: { books: dragBook } }, err => {
+						appListDB.update({ _id: listId }, { $push: { sources: dragBook } }, err => {
 							commit('updateBookContents', dragListId)
 						})
 					})
 			})
 		}
+	},
+	/**
+	 * @param {Object} args
+	 * args = { src, listName }
+	 */
+	addListSource({ rootState, commit }, args) {
+		// Maximum 20 files
+		let selectedFiles = args.src
+		if (selectedFiles.length > 0) commit('isLoading')
+
+		if (selectedFiles.length > 20)
+			selectedFiles = Array.from(selectedFiles).slice(0, 20)
+		let filePaths = Object.keys(selectedFiles).map(f => selectedFiles[f].path)
+
+		if (!fs.existsSync(`${userData}/book-images`))
+			fs.mkdirSync(`${userData}/book-images`)
+
+		let sources = [], tempAuthors = new Set(), authors = new Set()
+
+		new Promise(resolve => {
+			authorListDb.find({}, (e, docs) => resolve(docs.map(a => a.authorName)))
+		}).then(tempAuthors => {
+			new Promise(resolve => {
+				filePaths.forEach(bookPath => {
+					let data = fs.readFileSync(bookPath)
+
+					// generate bookId
+					let bookId = (args.listId + '_' + Math.random().toString(36).substr(2, 9))
+					let bookImagePath = `${userData}/book-images/${bookId}.jpeg`
+
+					// props = { meta, pageCount }
+					saveImage(data, bookImagePath).then(props => {
+						let metadata = props.meta.metadata != null ? props.meta.metadata.metadata : {}
+						let info = props.meta.info != null ? props.meta.info : {}
+
+						let bookName = (metadata['dc:title'] != '()' ? metadata['dc:title'] : '')
+							|| bookPath.match(/.*[\/\\](.+?)\./).pop()
+							|| 'Untitled'
+						let bookAuthor = info.Author
+							|| metadata['dc:author']
+							|| 'Unknown Author'
+						let bookPageCount = props.pageCount
+
+						authors.add(bookAuthor)
+
+						sources.push({
+							bookId: bookId,
+							bookImagePath: bookImagePath,
+							bookPath: bookPath,
+							bookName: bookName,
+							bookAuthor: bookAuthor,
+							bookPageCount: bookPageCount,
+							listId: args.listId
+						})
+
+						if (sources.length == selectedFiles.length) resolve(sources)
+					})
+				})
+			}).then(sources => {
+				appListDB.update({ listName: args.listName }, { $push: { sources: { $each: sources } } }, (err, num) => {
+					let _tempAuthors = Array.from(tempAuthors)
+					let _authors = Array.from(authors).filter(e => _tempAuthors.indexOf(e) === -1).map(e => ({ authorName: e }))
+
+					authorListDb.insert(_authors, err => commit('updateAuthorsList'))
+					commit('updateBookContents', args.listId)
+					commit('isLoading')
+				})
+			})
+		})
 	},
 	/**
 	 * @param {Object} args
@@ -52,7 +121,7 @@ const actions = {
 		if (!fs.existsSync(`${userData}/book-images`))
 			fs.mkdirSync(`${userData}/book-images`)
 
-		let books = [], tempAuthors = new Set(), authors = new Set()
+		let sources = [], tempAuthors = new Set(), authors = new Set()
 
 		new Promise(resolve => {
 			authorListDb.find({}, (e, docs) => resolve(docs.map(a => a.authorName)))
@@ -80,7 +149,7 @@ const actions = {
 
 						authors.add(bookAuthor)
 
-						books.push({
+						sources.push({
 							bookId: bookId,
 							bookImagePath: bookImagePath,
 							bookPath: bookPath,
@@ -90,11 +159,11 @@ const actions = {
 							listId: args.listId
 						})
 
-						if ( books.length == selectedFiles.length ) resolve(books)
+						if ( sources.length == selectedFiles.length ) resolve(sources)
 					})
 				})
-			}).then( books => {
-				bookListDb.update({ _id: args.listId }, { $push: { books: { $each: books } } }, (err, num) => {
+			}).then( sources => {
+				appListDB.update({ _id: args.listId }, { $push: { sources: { $each: sources } } }, (err, num) => {
 					let _tempAuthors = Array.from(tempAuthors)
 					let _authors = Array.from(authors).filter(e => _tempAuthors.indexOf(e) === -1).map(e => ({ authorName: e }))
 
@@ -119,17 +188,17 @@ const actions = {
 				value.event.preventDefault()
 
 				if (value.buttonClicked == 'ok') {
-					bookListDb.findOne({ _id: args.listId }, (err, selectedList) => {
-						selectedList.books.forEach(book => {
+					appListDB.findOne({ _id: args.listId }, (err, selectedList) => {
+						selectedList.sources.forEach(book => {
 							// remove book image
 							fs.unlink(book.bookImagePath)
 
 							// does the book author have another book? 
 							// if there is no other book, the author is deleted.
 							let bookCount = 0
-							bookListDb.find({ _id: { $ne: args.listId } }, (err, lists) => {
+							appListDB.find({ _id: { $ne: args.listId } }, (err, lists) => {
 								lists.forEach(list => {
-									list.books.forEach(b => {
+									list.sources.forEach(b => {
 										if (b.bookAuthor == book.bookAuthor) bookCount++
 									})
 								})
@@ -142,10 +211,10 @@ const actions = {
 						})
 
 						// the selected list is deleted
-						bookListDb.remove({ _id: args.listId }, err => {
+						appListDB.remove({ _id: args.listId }, err => {
 							alertify.delay(3000).success(args.listName + ' list deleted.')
 							// book lists and book contents are updated.
-							commit('updateBookLists')
+							commit('updateAppLists')
 							commit('updateBookContents')
 						})
 					})

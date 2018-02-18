@@ -1,21 +1,21 @@
 
 import Vuex from 'vuex'
 
-import app from './modules/app'
+import wrapper from './modules/wrapper'
 import sidebar from './modules/sidebar'
-import booksContent from './modules/books_content'
+import sourcesContent from './modules/sources_content'
 import authorList from './modules/author_list'
-import bookList from './modules/book_list'
+import appList from './modules/app_list'
 import book from './modules/book'
 import top from './modules/top'
 
 export default new Vuex.Store({
 	modules: {
-		app,
 		top,
+		wrapper,
 		sidebar,
-		booksContent,
-		bookList,
+		sourcesContent,
+		appList,
 		authorList,
 		book,
 	}

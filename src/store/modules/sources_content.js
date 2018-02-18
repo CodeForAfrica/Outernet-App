@@ -1,16 +1,16 @@
 
 const state = {
-	booksContent: []
+	sourcesContent: []
 }
 
 const mutations = {
 	updateBookContents(state, listId) {
 		if (listId)
-			bookListDb.findOne({ _id: listId }, (err, doc) => {
-				state.booksContent = doc.books
+			appListDB.findOne({ _id: listId }, (err, doc) => {
+				state.sourcesContent = doc.sources
 			})
 		else
-			state.booksContent = []
+			state.sourcesContent = []
 	}
 }
 

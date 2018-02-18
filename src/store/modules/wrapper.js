@@ -1,14 +1,16 @@
 
 const state = {
-	toggleBooksContent: true,
+	toggleSourcesContent: true,
 	openedBookPath: '',
-	isLoading: false
+	isLoading: false,
+	connectionStatus: false
 }
 
 const getters = {
-	toggleBooksContent: state => state.toggleBooksContent,
+	toggleSourcesContent: state => state.toggleSourcesContent,
 	openedBookPath: state => state.openedBookPath,
-	isLoading: state => state.isLoading
+	isLoading: state => state.isLoading,
+	connectionStatus: state => state.connectionStatus
 }
 
 const mutations = {

@@ -6,6 +6,8 @@ const {
 
 const electron = require('electron')
 
+require('electron-debug')({ showDevTools: true });
+
 let win
 
 function createWindow() {
