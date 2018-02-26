@@ -21,6 +21,7 @@ module.exports = {
     'no-param-reassign': 0,
     'no-shadow': 0,
     'import/extensions': 0,
+    'no-plusplus': 'off',
     'import/newline-after-import': 0,
     'no-multi-assign': 0,
     // allow debugger during development
