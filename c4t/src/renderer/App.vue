@@ -12,4 +12,5 @@
 
 <style>
   /* CSS */
+  @import url('~@/assets/css/style.css');
 </style>

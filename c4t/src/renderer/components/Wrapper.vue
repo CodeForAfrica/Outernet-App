@@ -1,6 +1,7 @@
 <template>
   <div :class="['main', { 'update' : update_check }]">
-    <top></top>
+
+    <top />
 
     <sidebar v-show="toggleSources"></sidebar>
 
@@ -53,11 +54,10 @@ export default {
     },
     ...mapActions({
       addAppList: 'addAppList',
-      addSources: 'addSources',
     }),
   },
   created() {
-    this.addAppList();
+    // this.addAppList();
     localStorage.clear();
 
     try {

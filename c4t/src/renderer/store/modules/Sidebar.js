@@ -41,10 +41,7 @@ const actions = {
   addAppList({ commit }) {
     appslist.forEach((e) => {
       appListDB.find({ listName: e.listName }, (err, docs) => {
-        if (docs.length) {
-          // The app already exist
-          // console.log(docs);
-        } else {
+        if (!docs.length) {
           // Insert new apps for the first time
           appListDB.insert(
             {
@@ -57,19 +54,18 @@ const actions = {
       });
     });
   },
-  addSources({ dispatch }, args) {
-    appListDB.find({
-      listName: args.listName,
-      sources: args.src,
-    }, (err, docs) => {
-      if (docs.length) {
-        // console.log(`Source exist ${args}`);
-      } else {
-        dispatch('addListSource', args);
-        // console.log(`Add source in ${args.listName}`);
-      }
-    });
-  },
+
+  // addSources({ dispatch }, args) {
+  //   appListDB.find({
+  //     listName: args.listName,
+  //     sources: args.src,
+  //   }, (err, docs) => {
+  //     if (!docs.length) {
+  //       dispatch('addListSource', args);
+  //     }
+  //   });
+  // },
+
   addNewList({ state, commit }) {
     if (state.newListInput) {
       const newListName = state.newListName.trim();
@@ -88,9 +84,9 @@ const actions = {
       state.newListInput = true;
     }
   },
+
   bookSearching({ rootState, commit }, event) {
     commit('activeList');
-
     const results = [];
     const query = event.target.value.toLowerCase().trim();
 
@@ -107,7 +103,8 @@ const actions = {
         });
       });
     }
-    rootState.sourcesContent.sourcesContent = results;
+    console.log(rootState);
+    // rootState.sourcesContent.sourcesContent = results;
   },
 };
 

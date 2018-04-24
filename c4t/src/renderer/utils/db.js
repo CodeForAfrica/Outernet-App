@@ -12,7 +12,4 @@ const authorListDB = new Datastore({
   autoload: true,
 });
 
-export {
-  appListDB,
-  authorListDB,
-};
+export { appListDB, authorListDB, userData };

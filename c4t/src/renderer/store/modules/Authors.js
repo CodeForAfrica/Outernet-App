@@ -23,6 +23,10 @@ const actions = {
   },
 };
 
+// const mutations = {
+
+// };
+
 export default {
   actions,
 };

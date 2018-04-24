@@ -39,7 +39,7 @@ export default {
       updateBrightness: 'updateBrightness',
       updateShowTranslate: 'updateShowTranslate',
       backToMain: 'backToMain',
-      checkConnection: 'checkConnection',
+      fetchConnStatus: 'fetchConnStatus',
     }),
   },
   computed: {
@@ -52,7 +52,7 @@ export default {
   created() {
     // Trigger internet connection checkup
     setInterval(() => {
-      this.checkConnection();
+      this.fetchConnStatus();
     }, 1000);
   },
   components: {

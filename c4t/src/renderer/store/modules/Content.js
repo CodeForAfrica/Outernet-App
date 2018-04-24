@@ -8,9 +8,9 @@ const actions = {
    * @param {string} bookPath
    */
   openBook({ rootState }, bookPath) {
-    rootState.wrapper.openedBookPath =
+    rootState.Wrapper.openedBookPath =
       `../pdfviewer/web/viewer.html?file=${bookPath}`;
-    rootState.wrapper.toggleSources = false;
+    rootState.Wrapper.toggleSources = false;
 
     // The address of the external links clicked
     // in the book is given to the input named <externalLink>.
@@ -52,6 +52,7 @@ const actions = {
         { _id: args.listId },
         { $pull: { sources: { bookId: args.bookId } } },
         (err, n) => {
+          console.log(n);
           // The author list and the book content are updated.
           commit('updateAuthorsList');
           commit('updateBookContents', args.listId);

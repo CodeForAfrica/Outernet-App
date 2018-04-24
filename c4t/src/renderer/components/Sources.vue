@@ -21,9 +21,6 @@ import { mapState } from 'vuex';
 import Content from './Content';
 
 export default {
-  data() {
-  },
-
   computed: mapState({
     sourcesContent: state => state.sourcesContent.sourcesContent,
   }),
