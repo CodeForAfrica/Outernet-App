@@ -61,17 +61,24 @@ export default {
     localStorage.clear();
 
     try {
-      request.get('https://api.github.com/repos/mtuchi/C4T-Ed/releases/latest',
-        { headers: { 'Content-Type': 'application/json', 'User-Agent': 'request' } },
+      request.get(
+        'https://api.github.com/repos/mtuchi/C4T-Ed/releases/latest',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'request',
+          },
+        },
         (err, res, body) => {
           const jsonBody = JSON.parse(body);
 
           const currentVersion = require('../../../package.json').version.toString();
           if (jsonBody.tag_name) {
             const releaseVersion = jsonBody.tag_name.substr(1).toString();
-            this.update_check = (currentVersion !== releaseVersion);
+            this.update_check = currentVersion !== releaseVersion;
           }
-        });
+        },
+      );
     } catch (error) {
       // console.log(error);
     }

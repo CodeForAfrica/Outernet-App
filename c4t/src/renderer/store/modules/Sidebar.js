@@ -55,17 +55,6 @@ const actions = {
     });
   },
 
-  // addSources({ dispatch }, args) {
-  //   appListDB.find({
-  //     listName: args.listName,
-  //     sources: args.src,
-  //   }, (err, docs) => {
-  //     if (!docs.length) {
-  //       dispatch('addListSource', args);
-  //     }
-  //   });
-  // },
-
   addNewList({ state, commit }) {
     if (state.newListInput) {
       const newListName = state.newListName.trim();

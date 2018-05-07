@@ -30,7 +30,7 @@
       <input 
         v-show="false" 
         type="file" 
-        :id="listId" 
+        :id="listId"
         accept="application/pdf" 
         @change="addListBook({ listId: listId, event: $event})" 
         maxlength="5" 
@@ -57,7 +57,9 @@ export default {
     dragEnter(e) {
       e.preventDefault();
 
-      document.querySelectorAll('[droppable]').forEach(e => e.classList.remove('enter'));
+      document
+        .querySelectorAll('[droppable]')
+        .forEach(e => e.classList.remove('enter'));
 
       const appList = e.path[1];
 

@@ -22,7 +22,9 @@ import Content from './Content';
 
 export default {
   computed: mapState({
-    sourcesContent: state => state.sourcesContent.sourcesContent,
+    // sourcesContent: state => state.sourcesContent.sourcesContent,
+
+    sourcesContent: 'sourcesContent',
   }),
 
   components: {

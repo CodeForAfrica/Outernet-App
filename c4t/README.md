@@ -1,10 +1,10 @@
-# c4t
+# Outernet
 
 > Desktop reader app for outernet
 
 #### Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
@@ -17,7 +17,6 @@ npm run build
 
 # lint all JS/Vue component files in `src/`
 npm run lint
-
 ```
 
 ---
